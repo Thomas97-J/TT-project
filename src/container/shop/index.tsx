@@ -1,54 +1,98 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useProducts from '../../hooks/useProduct.js';
 import { useInView } from 'react-intersection-observer';
 import ProductCard from './productCard';
+import Pagination from '../../components/pagenation';
+import { getProducts } from '../../api/getProducts';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import data from '../../data/dumy';
+import useComponentSize, {
+  componentSizeAtom,
+} from '../../hooks/useComponentSize';
+import { atom, useAtom } from 'jotai';
 
 function Shop() {
-  const [products24, getProducts] = useProducts();
+  const [products24, setProducts24] = useState([]);
   const [products, setProduct] = useState([]);
+  const [productCount, setProductCount] = useState(0);
   const [ref, inView, entry] = useInView({ triggerOnce: false });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [size, setSize] = useAtom(componentSizeAtom);
+
+  const location = useLocation();
+  const page = parseInt(searchParams.get('page') ?? '1');
+  const category = searchParams.get('category') ?? '';
 
   useEffect(() => {
-    console.log('call useEffect');
-    getProducts(0, 24);
-  }, []);
+    setProduct([]);
+    window.scrollTo({ top: 0 });
+    const splitUrl =
+      location?.pathname.replace('/shop', '')?.split('/') ?? null;
+    const collection = splitUrl[splitUrl.length - 1];
+    getProducts2((page - 1) * 48, 24, category, collection);
+    console.log(location, collection);
+  }, [location]);
 
   useEffect(() => {
-    console.log(products, products24);
     setProduct(products.concat(products24));
-    ///12배수로 가져옴, 한페이지에 48 가져오면 페이징으로 처리
   }, [products24]);
 
   useEffect(() => {
-    if (products.length === 24) {
-      getProducts(24, 24);
+    if (inView && products.length === 24) {
+      const splitUrl =
+        location?.pathname.replace('/shop', '')?.split('/') ?? null;
+      const collection = splitUrl[splitUrl.length - 1];
+      getProducts2((page - 1) * 48 + 24, 24, category, collection);
     }
   }, [inView]);
 
+  async function getProducts2(
+    start: number,
+    limit: number,
+    category: string,
+    collection: string
+  ) {
+    const { data, count } = await getProducts(
+      start,
+      limit,
+      category,
+      collection
+    );
+    setProducts24(data);
+    setProductCount(count);
+  }
   return (
     <ShopWrapper>
-      <LogoBanner>Logo</LogoBanner>
+      <LogoBanner size={size}>Taste Teeth</LogoBanner>
       <div className={'product'}>
         {products instanceof Array
           ? products.map((product: Product) => {
-              return <ProductCard product={product} key={product.name} />;
+              return <ProductCard product={product} key={product.id} />;
             })
           : ''}
       </div>
-      <div ref={ref}></div>
-
+      <RefDiv ref={ref}></RefDiv>
+      <Pagination
+        totalItems={productCount}
+        currentPage={page}
+        pageCount={5}
+        itemCountPerPage={48}
+      />
       <footer>footer</footer>
     </ShopWrapper>
   );
 }
+const RefDiv = styled.div`
+  height: 10px;
+`;
 export default Shop;
 interface Product {
-  product_id: number;
+  id: number;
   name: string;
   image: string;
   link: string;
   thumbnail: string;
+  collection: string;
 }
 
 const ShopWrapper = styled.div`
@@ -57,6 +101,7 @@ const ShopWrapper = styled.div`
   height: 100vh;
 
   .product {
+    min-height: 100vh;
     background-color: whitesmoke;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -73,9 +118,13 @@ const ShopWrapper = styled.div`
     background-color: white;
   }
 `;
-const LogoBanner = styled.div`
+const LogoBanner = styled.div<{ size: { width: number; height: number } }>`
   height: 210px;
-  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: ${(props) => props.size.width + 26}px;
+  padding-top: 10px;
+  padding-right: 10px;
   font-size: 48px;
   font-weight: bold;
 `;
