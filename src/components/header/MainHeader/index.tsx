@@ -1,82 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { AnimatePresence, motion } from 'framer-motion';
-import SearchBtn from './SearchBtn';
-import UserBtn from './UserBtn';
-import { Link, useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import BagBtn from './BagBtn';
-import useComponentSize from '../../../hooks/useComponentSize';
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import { AnimatePresence, motion } from "framer-motion";
+import SearchBtn from "./SearchBtn";
+import UserBtn from "./UserBtn";
+import { Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import BagBtn from "./BagBtn";
+import useComponentSize from "../../../hooks/useComponentSize";
 
 function Mainheader() {
   const [serchOpen, setSerchOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [componentRef, size] = useComponentSize();
-  const isShopPage = location.pathname.includes('/shop');
+  const isShopPage = location.pathname.includes("/shop");
   return (
     <Header
       layout={true}
       transition={{ duration: 0.1 }}
       ref={componentRef}
-      className={`${isShopPage ? 'shop' : ''}`}
+      className={`${isShopPage ? "shop" : ""}`}
     >
-      <AnimatePresence>
-        <motion.div
-          // layout={true}
-          transition={{ duration: 0.1 }}
-          className={`top ${isShopPage ? 'shop' : ''}`}
-        >
-          <div>
-            <Link className={'logo'} to={'/'}>
-              T T
-            </Link>
-            <Link to='/shop'>SHOP</Link>
-            {isShopPage ? (
-              <>
-                <Link to='/shop/collection1'>Collection1</Link>
-                <Link to='/shop/SS'>SS</Link>
-                <Link to='/shop/FW'>FW</Link>
-              </>
-            ) : (
-              ''
-            )}
-          </div>
+      <div className={`top ${isShopPage ? "shop" : ""}`}>
+        <div className="wrapper">
+          <Link className={"logo"} to={"/"}>
+            T T
+          </Link>
+          <Link to="/shop">SHOP</Link>
+          {isShopPage ? (
+            <>
+              <Link to="/shop/collection1">Collection1</Link>
+              <Link to="/shop/SS">SS</Link>
+              <Link to="/shop/FW">FW</Link>
+            </>
+          ) : (
+            ""
+          )}
+        </div>
 
-          <DivLine />
-          <div>
-            <SearchBtn
-              onClick={() => {
-                setSerchOpen(!serchOpen);
-              }}
-            />
-            <UserBtn
-              onClick={() => {
-                navigate('/my');
-              }}
-            />
-            <BagBtn
-              onClick={() => {
-                navigate('/my');
-              }}
-            ></BagBtn>{' '}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+        <DivLine />
+        <div className="wrapper">
+          <SearchBtn
+            onClick={() => {
+              setSerchOpen(!serchOpen);
+            }}
+          />
+          <UserBtn
+            onClick={() => {
+              navigate("/my");
+            }}
+          />
+          <BagBtn
+            onClick={() => {
+              navigate("/my");
+            }}
+          ></BagBtn>{" "}
+        </div>
+      </div>
 
       <AnimatePresence>
         {serchOpen ? (
           <motion.div
-            className='bottom'
+            className="bottom"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.1 }}
             exit={{ opacity: 0, y: -30 }}
           >
-            <input type='text' placeholder='type something' />
+            <input type="text" placeholder="type something" />
           </motion.div>
         ) : (
-          ''
+          ""
         )}
       </AnimatePresence>
     </Header>
@@ -86,7 +80,7 @@ function Mainheader() {
 const Header = styled(motion.header)`
   position: fixed;
   margin: 10px;
-  box-sizing: border-box;
+  height: 86px;
   z-index: 1000;
   top: 0;
   right: 0;
@@ -100,12 +94,13 @@ const Header = styled(motion.header)`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 45px;
     margin: 0;
     padding: 10px;
     background-color: black;
     z-index: 1;
     position: relative;
-    div {
+    .wrapper {
       display: flex;
     }
     a {
@@ -138,9 +133,9 @@ const Header = styled(motion.header)`
     justify-content: flex-start;
     align-items: center;
     width: 100%;
+    height: 40px;
     margin-top: 1px;
     padding: 2px;
-    box-sizing: border-box;
     background-color: black;
     z-index: -1;
     input {

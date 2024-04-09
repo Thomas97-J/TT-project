@@ -1,17 +1,17 @@
-import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
-import Mainheader from './components/header/MainHeader';
-import Main from './container/main';
-import Shop from './container/shop';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import Mainheader from "./components/header/MainHeader";
+import Main from "./container/main";
+import Shop from "./container/shop";
 
 function App() {
   return (
-    <div className='App'>
+    <div className="App">
       <Mainheader />
       <Routes>
-        <Route path='/' element={<Main />} />
-        <Route path='/shop/*' element={<Shop />} />
+        <Route path="/" element={<Main />} />
+        <Route path="/shop/*" element={<Shop />} />
       </Routes>
     </div>
   );

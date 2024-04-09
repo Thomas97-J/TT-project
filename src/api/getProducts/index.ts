@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 // import { atom, useAtom } from 'jotai';
 
 interface Props {
@@ -14,15 +14,16 @@ export const getProducts = async (
   collection: string
 ) => {
   try {
-    console.log(category);
     const response = await axios.get(
       `http://localhost:3001/products?_start=${start}&_limit=${limit}${
-        category.length ? '&category=' + category : ''
-      }${collection.length ? '&collection=' + collection : ''}`
+        category.length ? "&category=" + category : ""
+      }${collection.length ? "&collection=" + collection : ""}`
     );
     const data = response.data;
-    return { data: data, count: response.headers['x-total-count'] };
+    console.log(response);
+
+    return { data: data, count: response.headers["x-total-count"] };
   } catch {
-    throw new Error('getProducts err');
+    throw new Error("getProducts err");
   }
 };

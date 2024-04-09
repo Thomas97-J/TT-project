@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useInView } from 'react-intersection-observer';
-import ProductCard from './productCard';
-import Pagination from '../../components/pagenation';
-import { getProducts } from '../../api/getProducts';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import data from '../../data/dumy';
-import useComponentSize, {
-  componentSizeAtom,
-} from '../../hooks/useComponentSize';
-import { atom, useAtom } from 'jotai';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useInView } from "react-intersection-observer";
+import ProductCard from "./productCard";
+import Pagination from "../../components/pagenation";
+import { getProducts } from "../../api/getProducts";
+import { useLocation, useSearchParams } from "react-router-dom";
+import data from "../../data/dumy";
+import { componentSizeAtom } from "../../hooks/useComponentSize";
+import { useAtom } from "jotai";
+import MainFooter from "../../components/footers";
 
 function Shop() {
   const [products24, setProducts24] = useState([]);
@@ -20,14 +19,14 @@ function Shop() {
   const [size, setSize] = useAtom(componentSizeAtom);
 
   const location = useLocation();
-  const page = parseInt(searchParams.get('page') ?? '1');
-  const category = searchParams.get('category') ?? '';
+  const page = parseInt(searchParams.get("page") ?? "1");
+  const category = searchParams.get("category") ?? "";
 
   useEffect(() => {
     setProduct([]);
     window.scrollTo({ top: 0 });
     const splitUrl =
-      location?.pathname.replace('/shop', '')?.split('/') ?? null;
+      location?.pathname.replace("/shop", "")?.split("/") ?? null;
     const collection = splitUrl[splitUrl.length - 1];
     getProducts2((page - 1) * 48, 24, category, collection);
     console.log(location, collection);
@@ -40,7 +39,7 @@ function Shop() {
   useEffect(() => {
     if (inView && products.length === 24) {
       const splitUrl =
-        location?.pathname.replace('/shop', '')?.split('/') ?? null;
+        location?.pathname.replace("/shop", "")?.split("/") ?? null;
       const collection = splitUrl[splitUrl.length - 1];
       getProducts2((page - 1) * 48 + 24, 24, category, collection);
     }
@@ -64,12 +63,12 @@ function Shop() {
   return (
     <ShopWrapper>
       <LogoBanner size={size}>Taste Teeth</LogoBanner>
-      <div className={'product'}>
+      <div className={"product"}>
         {products instanceof Array
           ? products.map((product: Product) => {
               return <ProductCard product={product} key={product.id} />;
             })
-          : ''}
+          : ""}
       </div>
       <RefDiv ref={ref}></RefDiv>
       <Pagination
@@ -78,7 +77,7 @@ function Shop() {
         pageCount={5}
         itemCountPerPage={48}
       />
-      <footer>footer</footer>
+      <MainFooter />
     </ShopWrapper>
   );
 }
@@ -111,11 +110,6 @@ const ShopWrapper = styled.div`
     @media (max-width: 700px) {
       grid-template-columns: 1fr 1fr;
     }
-  }
-
-  footer {
-    height: 200px;
-    background-color: white;
   }
 `;
 const LogoBanner = styled.div<{ size: { width: number; height: number } }>`
