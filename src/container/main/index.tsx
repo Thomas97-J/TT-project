@@ -16,49 +16,71 @@ function Main() {
   const [ref4, inView4, entry4] = useInView({ triggerOnce: false });
   const bannerRefArray: any[] = [ref1, ref2, ref3, ref4];
   const bannerInviewArray: any[] = [inView1, inView2, inView3, inView4];
-  const bannerEntryArray: any[] = [
-    entry1?.target,
-    entry2?.target,
-    entry3?.target,
-    entry4?.target,
-  ];
+  const [bannerEntryArray, setBannerEntryArray] = useState<
+    Array<Element | undefined>
+  >([entry1?.target, entry2?.target, entry3?.target, entry4?.target]);
   const [sectionNumber, setSectionNumber] = useState(0);
 
   useEffect(() => {
-    //    window.addEventListener("wheel", function (e): void {
-    console.log("wheel", bannerInviewArray);
-    //      bannerRefArray[2]?.scrollIntoView();
-    //  });
-  }, [inView1]);
+    setBannerEntryArray([
+      entry1?.target,
+      entry2?.target,
+      entry3?.target,
+      entry4?.target,
+    ]);
+    console.log("Debug:entry update");
+  }, [entry1?.target, entry2?.target, entry3?.target, entry4?.target]);
 
   function move(e: React.WheelEvent<HTMLDivElement>) {
+    // e.preventDefault();
     if (e.deltaY < 0) {
-      console.log("Move up", sectionNumber);
+      console.log("Move up", sectionNumber, bannerEntryArray);
+
       bannerEntryArray[sectionNumber - 1]?.scrollIntoView({
-        behavior: "smooth",
         block: "start",
+        inline: "start",
+        behavior: "smooth",
       });
+
       setSectionNumber(sectionNumber <= 0 ? 0 : sectionNumber - 1);
     } else {
-      console.log("Move down", sectionNumber);
+      console.log("Move Down", sectionNumber, bannerEntryArray);
+
+      // console.log(
+      //   "Move down",
+      //   sectionNumber,
+      //   window.scrollY +
+      //     bannerEntryArray[sectionNumber + 1]?.getBoundingClientRect().top
+      // );
+      // window.scrollTo({
+      //   top:
+      //     window.scrollY +
+      //     bannerEntryArray[sectionNumber + 1]?.getBoundingClientRect().top,
+
+      //   behavior: "smooth",
+      // });
       bannerEntryArray[sectionNumber + 1]?.scrollIntoView({
-        behavior: "smooth",
         block: "start",
+        inline: "start",
+        behavior: "smooth",
       });
       setSectionNumber(sectionNumber >= 3 ? 3 : sectionNumber + 1);
     }
   }
-  useEffect(() => {
-    // window.addEventListener("wheel", function (e): void {
-    //   console.log("wheel", inView1);
-    //   clearTimeout(setTimeout(move));
-    // });
-  }, []);
 
   //http://www.devdic.com/javascript/refer/algorithm/document:2857/%ED%9C%A0(wheel)%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%99%94%EB%A9%B4-%EB%8B%A8%EC%9C%84-%EC%9D%B4%EB%8F%99
   return (
-    <MainWrapper onWheel={(e) => move(e)}>
-      <div className={"banner1"} ref={bannerRefArray[0]}>
+    <MainWrapper
+      className={"main"}
+      onWheel={(e) => {
+        move(e);
+        // setTimeout(function () {
+        //   if (e.deltaY < 0) doScroll(1);
+        //   else doScroll(-1);
+        // }, 50);
+      }}
+    >
+      <div className={"banner1"} id={"banner1"} ref={bannerRefArray[0]}>
         main banner
       </div>
       <div className={"banner2"} ref={bannerRefArray[1]}>
@@ -70,7 +92,7 @@ function Main() {
         banner3
       </div>
       <div className={"banner4"} ref={bannerRefArray[3]}>
-        banner3
+        banner4
       </div>
       <MainFooter />
     </MainWrapper>
@@ -82,7 +104,8 @@ const MainWrapper = styled.div`
   position: relative;
   width: 100vw;
   height: 100vh;
-  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+
   .banner1 {
     display: flex;
     align-items: center;
